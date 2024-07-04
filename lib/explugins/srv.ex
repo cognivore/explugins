@@ -9,7 +9,7 @@ defmodule Explugins.Srv do
 
   use GenServer
 
-  def state0 do
+  def init_modules_call_once!() do
     # For each directory $dir in priv, 
     # We check if the module $Dir.Flags is loaded.
     # If it is, we crash (or send mail, lol).
@@ -25,7 +25,8 @@ defmodule Explugins.Srv do
         throw("Plugin #{dir_caps} is already loaded.")
       else
         IO.puts("Loading plugin #{dir_caps}.")
-        Code.compile_file("./priv/#{dir}/flags.exs")
+        # May throw if compilation fails?
+        [] = Code.compile_file("./priv/#{dir}/flags.exs")
       end
     end
   end
@@ -36,6 +37,13 @@ defmodule Explugins.Srv do
 
   @impl true
   def init(_opts) do
-    {:ok, opts}
+    {:ok, []}
+  end
+
+  def handle_call(x, state) when is_atom(x) do
+    # Convert atom x to string
+    x_caps = to_string(x) |> String.capitalize()
+    plugin_atom = String.to_atom("${x_caps}.Flags")
+    # MFA-call plugin_atom's "callback" function
   end
 end
