@@ -23,9 +23,6 @@
 
             devShell.x86_64-linux =
                 pkgs.mkShell {
-                    nativeBuildInputs = [
-                        pkgs.libsodium
-                    ];
                     buildInputs = [
                         pkgs.erlangR24
                         goo.defaultPackage.x86_64-linux
